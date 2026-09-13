@@ -11,5 +11,21 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(server 
     apps/server_main.cpp
+    src/server.cpp
+    src/protocol.cpp
+)
 
+target_include_directories(server
+  PRIVATE
+     include
+)
+
+add_executable(protocol_test
+     tests/protocol_test.cpp
+     src/protocol.cpp
+)
+
+target_include_directories(protocol_test
+   PRIVATE
+     include
 )
