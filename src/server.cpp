@@ -1,10 +1,12 @@
+#include<string>
+#include "async_msg/protocol.hpp"
 #include <arpa/inet.h>
 #include <cstring>
 #include <iostream>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
+//#include"protocol.cpp"
 int run_server()
 {
     int server_fd = socket(AF_INET,SOCK_STREAM, 0);
@@ -49,8 +51,10 @@ int run_server()
         //return 1;
     }
     std::cout<<"Client connected!\n";
-    while(true)
+    
+/*    while(true)
     {
+
     char buffer[1024]{};
 
     ssize_t bytes_received = recv(
@@ -77,6 +81,47 @@ int run_server()
     }
     std::cout<<"Received: "<< buffer << '\n';
     //close(client_fd);
+    }*/
+
+    constexpr std::uint32_t MAX_MESSAGE_SIZE = 4096;
+
+    while(true)
+    {
+        std::uint32_t encoded_length = 0;
+        bool header_received = async_msg::recv_all(
+            client_fd,
+            &encoded_length,
+            async_msg::HEADER_SIZE
+        );
+
+        if(!header_received)
+        {
+            std::cout<<"Client disconnected or header receive failed\n";
+            break;
+        }
+
+        std::uint32_t message_length= async_msg::decode_length(encoded_length);
+
+        if(message_length>MAX_MESSAGE_SIZE)
+        {
+            std::cerr<<"Message too large: "<<message_length<<" bytes\n";
+            break;
+        }
+        std::string message(message_length,'\0');
+
+        bool payload_received= async_msg::recv_all(
+            client_fd,
+            message.data(),
+            message_length
+        );
+    
+
+    if(!payload_received)
+    {
+        std::cout<<"Client disconnected during message\n";
+        break;
+    }
+    std::cout<<"Received: "<<message<<'\n';
     }
     close(client_fd);
 }

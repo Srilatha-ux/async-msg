@@ -29,3 +29,13 @@ target_include_directories(protocol_test
    PRIVATE
      include
 )
+
+add_executable(protocol_client
+tests/protocol_client.cpp
+src/protocol.cpp
+)
+
+target_include_directories(protocol_client
+PRIVATE
+  include
+)
