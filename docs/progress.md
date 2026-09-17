@@ -533,3 +533,25 @@ send_frame()
 Protocol Layer
   ↓
 send_all()
+
+# 22. Protocol Boundary Regression Testing
+
+After introducing send_frame() and recv_frame(), the protocol boundaries were
+tested again.
+
+Tests performed:
+
+- Normal messages
+- Empty payload
+- Payload larger than 4096 bytes
+- Normal messages after boundary testing
+
+The validation is now encapsulated inside recv_frame().
+
+The server receives either:
+
+- Success
+- Disconnected
+- Error
+
+without needing to understand the wire-format implementation.
