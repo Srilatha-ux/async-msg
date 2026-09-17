@@ -27,9 +27,9 @@ int main()
 
     char buffer[64]{};
 
-    bool received = async_msg::recv_all(sockets[1],buffer,std::strlen(message));
-
-    assert(received);
+    //bool received = async_msg::recv_all(sockets[1],buffer,std::strlen(message)
+    async_msg::RecvResult received = async_msg::recv_all(sockets[1],buffer,std::strlen(message));
+    assert(received == async_msg::RecvResult::Success);
 
     assert(std::strcmp(buffer,message)==0);
     close(sockets[0]);

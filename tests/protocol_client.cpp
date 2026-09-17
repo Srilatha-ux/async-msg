@@ -30,8 +30,13 @@ int main()
 
     assert(result==0);
 
-    std::string message = "hello async-msg";
+    //std::string message = "hello async-msg";
+std::string messages[] = {"hello async-msg",
+"Second Message",
+"hello hey"};
 
+for(const std::string& message:messages)
+{
     std::uint32_t encoded_length = async_msg::encode_length(static_cast<std::uint32_t>(message.size()));
 
     bool header_sent = async_msg::send_all(socket_fd,&encoded_length,async_msg::HEADER_SIZE);
@@ -43,7 +48,7 @@ int main()
     assert(payload_sent);
 
     std::cout<<"Framed message sent\n";
-
+}
     close(socket_fd);
 
     return 0;
