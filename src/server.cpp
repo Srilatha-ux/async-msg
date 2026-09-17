@@ -56,64 +56,25 @@ int run_server()
 
     while(true)
     {
-        std::uint32_t encoded_length = 0;
+        std::string message;
    
-async_msg::RecvResult header_result = 
-async_msg::recv_all(
-     client_fd,
-            &encoded_length,
-            async_msg::HEADER_SIZE
-);
+    async_msg::RecvResult result = async_msg::recv_frame(client_fd,message);
 
-if(header_result == async_msg::RecvResult::Disconnected)
-{
-    std::cout<<"Client disconnected\n";
-    break;
-}
-
-if(header_result==async_msg::RecvResult::Error)
-{
-    std::cerr<<"Failed to receive message header\n";
-    break;
-
-}
-        std::uint32_t message_length= async_msg::decode_length(encoded_length);
-
-        if(message_length==0)
-        {
-            std::cerr<<"Invalid message: empty payload\n";
-            break;
-        }
-        if(message_length>MAX_MESSAGE_SIZE)
-        {
-            std::cerr<<"Message too large: "<<message_length<<" bytes\n";
-            break;
-        }
-        std::string message(message_length,'\0');
-
-
-    async_msg::RecvResult payload_result = async_msg::recv_all(
-        client_fd,
-            message.data(),
-            message_length
-    );
-
-    if(payload_result==async_msg::RecvResult::Disconnected)
+    if(result == async_msg::RecvResult::Disconnected)
     {
-        std::cout<<"Client disconnected during message\n";
-break;
+        std::cout<<"Client disconnected\n";
+        break;
     }
 
-    if(payload_result==async_msg::RecvResult::Error)
+    if(result==async_msg::RecvResult::Error)
     {
-        std::cout<<"Failed to receive message payload\n";
-break;
+    std::cerr<<"Failed to receive message frame\n";
+    break;
     }
     std::cout<<"Received:"<<message<<'\n';
-}   
-close(client_fd);
+    }
+    close(client_fd);
+    }
+    close(server_fd);
+    return 0;
 }
-close(server_fd);
-return 0;
-}
-

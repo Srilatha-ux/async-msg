@@ -3,20 +3,22 @@
 #include<cstddef>
 #include<cstdint>
 
+#include<string>
 namespace async_msg
 {
     constexpr std::uint32_t HEADER_SIZE = 4;
     std::uint32_t encode_length(std::uint32_t length);
     std::uint32_t decode_length(std::uint32_t encoded_length);
 
-    bool send_all(int socket_fd, const void* data, std::size_t size);
     enum class RecvResult
     {
         Success,
         Disconnected,
         Error
     };
-
-    //bool recv_all(int socket_fd, void* data, std::size_t size);
+    bool send_all(int socket_fd, const void* data, std::size_t size);
     RecvResult recv_all(int socket_fd, void* data, std::size_t size);
+
+    bool send_frame(int socket_fd, const std::string& message);
+    RecvResult recv_frame(int socket_fd, std::string& message);
 } //namespace async_msg

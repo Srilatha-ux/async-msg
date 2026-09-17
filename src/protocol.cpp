@@ -72,4 +72,57 @@ namespace async_msg
         }
         return RecvResult::Success;
     }
+
+    bool send_frame(int socket_fd, const std::string& message)
+    {
+        std::uint32_t message_length = static_cast<std::uint32_t>(message.size());
+
+        std::uint32_t encoded_length = encode_length(message_length);
+
+        bool header_sent = send_all(socket_fd,&encoded_length, HEADER_SIZE);
+
+        if(!header_sent)
+        {
+            return false;
+        }
+
+        return send_all(socket_fd, message.data(),message.size());
+    }
+
+    RecvResult recv_frame(int socket_fd,std::string& message)
+    {
+        constexpr std::uint32_t MAX_MESSAGE_SIZE = 4096;
+
+        std::uint32_t encoded_length = 0;
+
+        RecvResult header_result = recv_all(socket_fd, &encoded_length,HEADER_SIZE);
+
+        if(header_result != RecvResult::Success)
+        {
+            return header_result;
+        }
+
+        std::uint32_t message_length = decode_length(encoded_length);
+
+        if(message_length == 0)
+        {
+            return RecvResult::Error;
+        }
+
+        if(message_length > MAX_MESSAGE_SIZE)
+        {
+            return RecvResult::Error;
+        }
+
+        message.resize(message_length);
+
+        RecvResult payload_result = recv_all(socket_fd,message.data(),message_length);
+
+        if(payload_result != RecvResult::Success)
+        {
+            message.clear();
+            return payload_result;
+        }
+        return RecvResult::Success;
+    }
 } //namespace async_msg

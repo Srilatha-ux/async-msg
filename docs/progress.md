@@ -454,4 +454,82 @@ decode_length()
 send_all()
 recv_all()
 
+20. Next Milestone
 
+The next goal is to move the complete framing operation into the protocol layer.
+
+Instead of making the server manually perform:
+
+encode/decode length
+send/receive header
+validate length
+send/receive payload
+
+we will introduce a higher-level interface:
+
+send_frame()
+recv_frame()
+
+The desired architecture is:
+
+Server
+  │
+  ├── recv_frame()
+  │
+  └── send_frame()
+          │
+          ↓
+      Protocol Layer
+          │
+          ├── length encoding
+          ├── send_all()
+          ├── recv_all()
+          └── size validation
+
+This will give the server a cleaner separation between:
+
+networking/application logic
+protocol implementation
+low-level socket I/O
+
+# 21. Milestone — Protocol Encapsulation
+
+The framing implementation was moved behind the protocol API.
+
+The server now uses:
+
+    recv_frame()
+
+instead of manually handling:
+
+- the 4-byte length header
+- byte-order conversion
+- payload size validation
+- payload allocation
+- recv_all()
+
+The client now uses:
+
+    send_frame()
+
+instead of manually constructing and transmitting the frame.
+
+This separates application/server logic from the wire protocol implementation.
+
+The resulting architecture is:
+
+Server
+  ↓
+recv_frame()
+  ↓
+Protocol Layer
+  ↓
+recv_all()
+
+Client
+  ↓
+send_frame()
+  ↓
+Protocol Layer
+  ↓
+send_all()
