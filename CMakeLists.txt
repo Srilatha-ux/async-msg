@@ -39,3 +39,14 @@ target_include_directories(protocol_client
 PRIVATE
   include
 )
+
+add_executable(server_class_test
+tests/server_class_test.cpp
+src/server_class.cpp
+src/protocol.cpp
+)
+
+target_include_directories(server_class_test
+PRIVATE
+include
+)
