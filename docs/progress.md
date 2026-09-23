@@ -2,7 +2,6 @@ async-msg — Project Progress Log
 1. Project Goal
 
 async-msg is a Linux-based C++ messaging system designed to demonstrate:
-
 Modern C++20
 Linux system programming
 TCP networking
@@ -45,25 +44,14 @@ async-msg/
 ├── tests/
 ├── docs/
 └── scripts/
-Directory responsibilities
 
-apps/
-: Application entry points.
-
-src/
-: Implementation of application components.
-
-include/
-: Public headers and interfaces.
-
-tests/
-: Unit and protocol test programs.
-
-docs/
-: Project documentation and learning notes.
-
-scripts/
-: Utility and test scripts that may be added later.
+**Directory responsibilities**
+apps/ : Application entry points.
+src/ : Implementation of application components.
+include/ : Public headers and interfaces.
+tests/ : Unit and protocol test programs.
+docs/ : Project documentation and learning notes.
+scripts/ : Utility and test scripts that may be added later.
 
 4. Milestone 1 — C++20 Build System
 Objective
